@@ -126,7 +126,7 @@ def train_neural_network(input_image):
     gt = tf.placeholder("float", [None])
 
     action = tf.reduce_sum(tf.multiply(predict_action, argmax), reduction_indices = 1)
-    cost = tf.reduce_mean(tf.square(action - gt))
+    cost = tf.reduce_mean(tf.square(action - gt)) #损失函数为action
     optimizer = tf.train.AdamOptimizer(1e-6).minimize(cost)
 
     game = Game()
@@ -150,11 +150,12 @@ def train_neural_network(input_image):
             action_t = predict_action.eval(feed_dict = {input_image : [input_image_data]})[0]
 
             argmax_t = np.zeros([output], dtype=np.int)
-            if(random.random() <= INITIAL_EPSILON):
+            if(random.random() <= INITIAL_EPSILON): #初始阶段随机选择想那个方向移动
                 maxIndex = random.randrange(output)
             else:
                 maxIndex = np.argmax(action_t)
             argmax_t[maxIndex] = 1
+
             if epsilon > FINAL_EPSILON:
                 epsilon -= (INITIAL_EPSILON - FINAL_EPSILON) / EXPLORE
 
